@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avaliação e Revisão de Lógica de Programação em Python</title>
+  <style>
+    :root {
+      --primary: #1e293b;
+      --primary-light: #0284c7;
+      --card-bg: #ffffff;
+      --text: #334155;
+      --border: #cbd5e1;
+      --success: #16a34a;
+      --error: #dc2626;
+      --bg: #f8fafc;
+    }
+
+    * { 
+      box-sizing: border-box; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    }
+
+    body { 
+      background-color: var(--bg); 
+      color: var(--text); 
+      margin: 0; 
+      padding: 20px; 
+      display: flex; 
+      justify-content: center; 
+    }
+
+    .container { 
+      max-width: 800px; 
+      width: 100%; 
+      background: var(--card-bg); 
+      padding: 30px; 
+      border-radius: 12px; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+    }
+
+    h1 { 
+      color: var(--primary); 
+      font-size: 1.6rem; 
+      text-align: center; 
+      margin-bottom: 5px; 
+    }
+
+    p.subtitle { 
+      text-align: center; 
+      color: #64748b; 
+      font-size: 0.95rem; 
+      margin-top: 0; 
+      margin-bottom: 25px; 
+    }
+
+    .form-group { margin-bottom: 18px; }
+    label { font-weight: bold; display: block; margin-bottom: 6px; }
+    input[type="text"], input[type="email"], select { 
+      width: 100%; 
+      padding: 10px; 
+      border: 1px solid var(--border); 
+      border-radius: 6px; 
+      font-size: 1rem; 
+    }
+
+    .btn { 
+      background: var(--primary-light); 
+      color: white; 
+      border: none; 
+      padding: 12px 20px; 
+      border-radius: 6px; 
+      font-size: 1rem; 
+      cursor: pointer; 
+      font-weight: bold; 
+      width: 100%; 
+      transition: background 0.2s; 
+    }
+
+    .btn:hover { background: #0369a1; }
+    .btn-secondary { background: #64748b; margin-top: 10px; }
+    .btn-secondary:hover { background: #475569; }
+
+    .revision-box { 
+      background: #f0f9ff; 
+      border-left: 5px solid var(--primary-light); 
+      padding: 18px; 
+      border-radius: 8px; 
+      margin-bottom: 20px; 
+      display: none; 
+    }
+
+    .revision-box h3 { margin-top: 0; color: var(--primary); font-size: 1.15rem; }
+
+    .example-card {
+      background: #ffffff;
+      border: 1px solid #38bdf8;
+      border-radius: 6px;
+      padding: 15px;
+      margin-top: 12px;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+
+    .calc-block {
+      background: #0f172a;
+      color: #38bdf8;
+      border: 1px solid #334155;
+      font-family: 'Consolas', 'Courier New', Courier, monospace;
+      padding: 12px;
+      border-radius: 6px;
+      margin-top: 8px;
+      white-space: pre-wrap;
+      font-size: 0.9rem;
+    }
+
+    .option-btn { 
+      background: #f1f5f9; 
+      border: 1px solid var(--border); 
+      padding: 12px; 
+      margin-bottom: 8px; 
+      border-radius: 6px; 
+      width: 100%; 
+      text-align: left; 
+      cursor: pointer; 
+      font-size: 1rem; 
+    }
+
+    .option-btn:hover { background: #e2e8f0; }
+    .option-btn.selected { background: #e0f2fe; border-color: var(--primary-light); font-weight: bold; }
+
+    .feedback-box { padding: 15px; border-radius: 6px; margin-top: 15px; font-size: 0.95rem; line-height: 1.5; display: none; }
+    .feedback-box.correct { background: #dcfce7; color: #14532d; border: 1px solid #86efac; }
+    .feedback-box.incorrect { background: #fee2e2; color: #7f1d1d; border: 1px solid #fca5a5; }
+
+    .step { display: none; }
+    .step.active { display: block; }
+
+    .progress { height: 8px; background: #e2e8f0; border-radius: 4px; margin-bottom: 20px; overflow: hidden; }
+    .progress-bar { height: 100%; background: var(--primary-light); width: 0%; transition: width 0.3s; }
+
+    /* Estilos do Relatório de Correção */
+    .report-header { border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .report-header-title { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
+    .report-stamp { border: 2px solid var(--primary); color: var(--primary); padding: 5px 12px; font-weight: bold; font-size: 0.85rem; border-radius: 4px; text-align: center; }
+
+    .student-card { background: #f1f5f9; border: 1px solid var(--border); padding: 15px; border-radius: 8px; margin-bottom: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+    .student-card p { margin: 0; font-size: 0.95rem; }
+
+    .corrected-item { border: 1px solid var(--border); border-radius: 8px; padding: 15px; margin-bottom: 15px; background: #ffffff; }
+    .corrected-item-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-weight: bold; }
+    .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; }
+    .status-badge.certo { background: #dcfce7; color: var(--success); border: 1px solid #86efac; }
+    .status-badge.errado { background: #fee2e2; color: var(--error); border: 1px solid #fca5a5; }
+
+    .pedagogical-box { background: #fef3c7; border: 1px solid #f59e0b; padding: 15px; border-radius: 8px; margin-top: 25px; }
+    .pedagogical-box h3 { margin-top: 0; color: #b45309; font-size: 1.1rem; }
+
+    .action-card { background: #f8fafc; border: 1px solid var(--border); padding: 18px; border-radius: 8px; margin-top: 25px; }
+
+    @media print {
+      .btn, .no-print, .progress, .action-card { display: none !important; }
+      body { background: white; padding: 0; color: #000; }
+      .container { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; }
+      .corrected-item { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- TELA 1: IDENTIFICAÇÃO E REVISÃO -->
+  <div id="step-1" class="step active">
+    <h1>🐍 Avaliação de Lógica e Python</h1>
+    <p class="subtitle">Preencha seus dados para iniciar a avaliação interativa</p>
+
+    <div class="form-group">
+      <label for="student-name">Nome Completo do Aluno(a):</label>
+      <input type="text" id="student-name" placeholder="Digite seu nome completo">
+    </div>
+
+    <div class="form-group">
+      <label for="student-class">Turma:</label>
+      <select id="student-class">
+        <option value="">-- Selecione sua turma --</option>
+        <option value="1M1">1M1</option>
+        <option value="1M2">1M2</option>
+        <option value="2M1">2M1</option>
+        <option value="2M2">2M2</option>
+      </select>
+    </div>
+
+    <button class="btn no-print" style="margin-bottom: 15px;" onclick="toggleRevision()">📖 Revisão Teórica e Exemplo Resolvido</button>
+
+    <div id="revision-content" class="revision-box">
+      <h3>📖 Resumo Teórico: Estruturas Fundamentais em Python</h3>
+      <p>Confira os principais conceitos utilizados para programar o cérebro dos robôs:</p>
+      <ul>
+        <li><b>Tomada de Decisão (<code>if / elif / else</code>):</b> Permite que o programa escolha um caminho com base em condições numéricas.</li>
+        <li><b>Módulo <code>random.randint(a, b)</code>:</b> Sorteia um número inteiro entre os valores <code>a</code> e <code>b</code> (utilizado para simular variações de sensores ou sorteio de rotas).</li>
+        <li><b>Laço Contínuo e Interrupção (<code>while True</code> e <code>break</code>):</b> Cria um ciclo de execução contínuo no microcontrolador até que o comando <code>break</code> seja acionado (botão de emergência).</li>
+        <li><b>Tratamento de Erros (<code>try...except ValueError</code>):</b> Evita que o programa do robô trave se a leitura do sensor for nula, vazia ou inválida.</li>
+      </ul>
+
+      <div class="example-card">
+        <h4 style="margin-top: 0; color: var(--primary-light);">📌 EXEMPLO RESOLVIDO PASSO A PASSO</h4>
+        <p><b>Enunciado:</b> Um robô lê a distância de um obstáculo. Se for menor ou igual a 10 cm, ele deve parar. Como estruturar essa condição?</p>
+        
+        <div class="calc-block"># Exemplo de código em Python:
+if distancia &lt;= 10:
+    print("🛑 Obstáculo próximo! Parar motores.")
+else:
+    print("🟢 Caminho livre! Continuar rodando.")</div>
+      </div>
+    </div>
+
+    <button class="btn" onclick="startQuiz()">Iniciar Quiz 🚀</button>
+  </div>
+
+  <!-- TELA 2: QUIZ INTERATIVO -->
+  <div id="step-2" class="step">
+    <div class="progress">
+      <div id="progress-bar" class="progress-bar"></div>
+    </div>
+
+    <div class="no-print" style="margin-bottom: 15px; text-align: right;">
+      <button class="btn btn-secondary" style="width: auto; padding: 6px 12px; font-size: 0.85rem;" onclick="toggleQuizRevision()">📖 Lembrar Regras</button>
+    </div>
+
+    <div id="quiz-revision" class="revision-box">
+      <h3>💡 Lembrete de Sintaxe em Python</h3>
+      <div class="calc-block">• if/elif/else ➔ Tomada de decisão por faixas
+• while True / break ➔ Repetição contínua e parada de emergência
+• try/except ValueError ➔ Captura e tratamento de falhas
+• int(input()) ➔ Lê e converte texto para número inteiro</div>
+    </div>
+
+    <h3 id="question-title">Questão 1</h3>
+    <p id="question-text" style="font-size: 1.05rem; line-height: 1.5;"></p>
+
+    <div id="options-container"></div>
+
+    <button id="btn-verify" class="btn no-print" style="margin-top: 15px;" onclick="verifyAnswer()">Verificar Resposta</button>
+
+    <div id="feedback" class="feedback-box"></div>
+
+    <button id="btn-next" class="btn no-print" style="margin-top: 15px; display: none;" onclick="nextQuestion()">Próxima Questão ➔</button>
+  </div>
+
+  <!-- TELA 3: RELATÓRIO DE CORREÇÃO -->
+  <div id="step-3" class="step">
+    <div class="report-header">
+      <div class="report-header-title">📋 Relatório de Correção e Avaliação de Python</div>
+      <div class="report-stamp">COMPROVANTE DE ENTREGA</div>
+    </div>
+
+    <div class="student-card">
+      <p><b>Aluno(a):</b> <span id="res-name"></span></p>
+      <p><b>Turma:</b> <span id="res-class"></span></p>
+      <p><b>Nota Final:</b> <span id="res-score-pts" style="font-weight: bold; color: var(--primary-light);"></span> / 5,0 (<span id="res-percent"></span>%)</p>
+    </div>
+
+    <h3 style="color: var(--primary); border-bottom: 1px solid var(--border); padding-bottom: 5px;">Correção Detalhada das Questões</h3>
+    <div id="corrected-questions-list"></div>
+
+    <div class="pedagogical-box">
+      <h3>📋 Parecer Pedagógico e Orientações do Professor</h3>
+      <div id="pedagogical-content"></div>
+    </div>
+
+    <!-- BOTÕES DE ENVIO -->
+    <div class="action-card no-print">
+      <div class="form-group">
+        <label for="res-email-input">E-mail para Envio da Cópia da Prova (Opcional):</label>
+        <input type="email" id="res-email-input" placeholder="exemplo@email.com">
+      </div>
+
+      <button id="btn-send-email" class="btn" onclick="sendEvaluation()">📄 Enviar Prova Corrigida (PDF / Drive)</button>
+      <button class="btn btn-secondary" onclick="window.print()" style="margin-top: 10px;">🖨️ Imprimir / Salvar Cópia Local em PDF</button>
+      <button class="btn btn-secondary" onclick="location.reload()" style="margin-top: 10px;">🔄 Refazer Avaliação</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // CONFIGURAÇÕES DO GOOGLE APPS SCRIPT
+  const scriptUrl = "https://script.google.com/macros/s/SUA_API_DO_GOOGLE_SCRIPT/exec";
+  const DESTINATION_DRIVE_FOLDER = "SUA_PASTA_DO_GOOGLE_DRIVE";
+
+  // BANCO DE QUESTÕES DE PYTHON
+  const rawQuestions = [
+    {
+      pergunta: "1. No código 'if numero > 10: ... elif numero < 10: ... else: ...', qual mensagem será exibida na tela se a variável 'numero' for igual a 10?",
+      opcoes: [
+        "A) Imprime 'Maior que 10'.",
+        "B) Imprime 'Menor que 10'.",
+        "C) Executa o bloco 'else' e imprime 'É igual a 10'.",
+        "D) Gera um erro de sintaxe por falta de parênteses.",
+        "E) Nenhuma mensagem é exibida na tela."
+      ],
+      correta: 2,
+      explicacao: "Como 10 não é estritamente maior que 10 e nem menor que 10, as condições 'if' e 'elif' retornam Falso. O fluxo cai no 'else', executando a impressão 'É igual a 10'."
+    },
+    {
+      pergunta: "2. Qual é a função exata do comando 'random.randint(1, 100)' em um código Python?",
+      opcoes: [
+        "A) Arredondar um número decimal para o número inteiro mais próximo.",
+        "B) Sortear e retornar um número inteiro aleatório entre 1 e 100 (inclusive).",
+        "C) Converter o texto digitado pelo usuário no terminal em um número inteiro.",
+        "D) Exibir uma caixa de mensagem na tela do computador pedindo uma senha.",
+        "E) Calcular a velocidade média dos motores do robô."
+      ],
+      correta: 1,
+      explicacao: "A função 'randint(a, b)' da biblioteca 'random' sorteia e retorna um número inteiro dentro do intervalo fechado entre 'a' e 'b'."
+    },
+    {
+      pergunta: "3. Qual comando deve ser utilizado dentro de um laço 'while True:' para encerrar a execução do loop imediatamente quando o robô atinge a meta?",
+      opcoes: [
+        "A) stop",
+        "B) exit()",
+        "C) break",
+        "D) continue",
+        "E) pass"
+      ],
+      correta: 2,
+      explicacao: "O comando 'break' interrompe imediatamente o laço de repetição (while/for), passando o controle da execução para a primeira linha fora do loop."
+    },
+    {
+      pergunta: "4. Qual é a principal vantagem de utilizar o bloco 'try...except ValueError' ao ler palpites ou sensores com 'int(input())'?",
+      opcoes: [
+        "A) Permitir a digitação de números decimais com vírgula sem converter.",
+        "B) Alterar o valor sorteado no programa a cada tentativa errada.",
+        "C) Capturar o erro caso o usuário digite texto ou deixe o campo vazio, impedindo que o programa trave.",
+        "D) Reiniciar o computador automaticamente caso o código falhe.",
+        "E) Aumentar a velocidade do processador do robô."
+      ],
+      correta: 2,
+      explicacao: "A conversão 'int()' gera um erro do tipo 'ValueError' quando recebe valores não numéricos. O 'try...except' captura essa falha com segurança, mantendo o programa ativo."
+    },
+    {
+      pergunta: "5. Se o número secreto for 50 e o jogador digitar o palpite 30 em um programa de busca, qual será o retorno do sistema?",
+      opcoes: [
+        "A) '⬆️ Feedback: O número secreto é MAIOR!'",
+        "B) '⬇️ Feedback: O número secreto é MENOR!'",
+        "C) '🎉 ALVO ATINGIDO! Você acertou!'",
+        "D) '⚠️ Entrada inválida!'",
+        "E) 'É igual a 10'"
+      ],
+      correta: 0,
+      explicacao: "Como o palpite (30) é menor que o número secreto (50), a condição 'palpite < numero_secreto' é Verdadeira, orientando o jogador que o valor procurado é maior."
+    }
+  ];
+
+  let currentQuestionIndex = 0;
+  let score = 0;
+  let studentName = "";
+  let studentClass = "";
+  let studentAnswers = [];
+  let currentQuestionsState = [];
+
+  // FUNÇÃO DE EMBARALHAMENTO (FISHER-YATES)
+  function shuffle(array) {
+    let currentIndex = array.length, randomIndex;
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+    return array;
+  }
+
+  // PREPARA AS QUESTÕES E EMBARALHA AS ALTERNATIVAS DE CADA UMA
+  function prepareQuestions() {
+    currentQuestionsState = rawQuestions.map(q => {
+      let mappedOptions = q.opcoes.map((optText, originalIndex) => {
+        return {
+          text: optText,
+          isCorrect: originalIndex === q.correta
+        };
+      });
+
+      let shuffledOptions = shuffle([...mappedOptions]);
+      let newCorrectIndex = shuffledOptions.findIndex(item => item.isCorrect);
+
+      return {
+        pergunta: q.pergunta,
+        opcoes: shuffledOptions.map(item => item.text),
+        correta: newCorrectIndex,
+        explicacao: q.explicacao
+      };
+    });
+  }
+
+  function toggleRevision() {
+    const rev = document.getElementById("revision-content");
+    rev.style.display = (rev.style.display === "block") ? "none" : "block";
+  }
+
+  function toggleQuizRevision() {
+    const rev = document.getElementById("quiz-revision");
+    rev.style.display = (rev.style.display === "block") ? "none" : "block";
+  }
+
+  function startQuiz() {
+    studentName = document.getElementById("student-name").value.trim();
+    studentClass = document.getElementById("student-class").value;
+
+    if (!studentName) {
+      alert("Por favor, digite seu nome completo antes de iniciar.");
+      return;
+    }
+    if (!studentClass) {
+      alert("Por favor, selecione sua turma.");
+      return;
+    }
+
+    prepareQuestions();
+    currentQuestionIndex = 0;
+    score = 0;
+    studentAnswers = [];
+
+    document.getElementById("step-1").classList.remove("active");
+    document.getElementById("step-2").classList.add("active");
+
+    loadQuestion();
+  }
+
+  function loadQuestion() {
+    const q = currentQuestionsState[currentQuestionIndex];
+    
+    const pct = ((currentQuestionIndex) / currentQuestionsState.length) * 100;
+    document.getElementById("progress-bar").style.width = pct + "%";
+
+    document.getElementById("question-title").innerText = `Questão ${currentQuestionIndex + 1} de ${currentQuestionsState.length}`;
+    document.getElementById("question-text").innerText = q.pergunta;
+
+    const container = document.getElementById("options-container");
+    container.innerHTML = "";
+
+    q.opcoes.forEach((opcaoText, index) => {
+      const btn = document.createElement("button");
+      btn.className = "option-btn";
+      btn.innerText = opcaoText;
+      btn.onclick = () => selectOption(index);
+      container.appendChild(btn);
+    });
+
+    const feedback = document.getElementById("feedback");
+    feedback.style.display = "none";
+    feedback.className = "feedback-box";
+
+    document.getElementById("btn-verify").style.display = "block";
+    document.getElementById("btn-next").style.display = "none";
+  }
+
+  let selectedOptionIndex = null;
+
+  function selectOption(index) {
+    selectedOptionIndex = index;
+    const buttons = document.querySelectorAll("#options-container .option-btn");
+    buttons.forEach((btn, idx) => {
+      if (idx === index) {
+        btn.classList.add("selected");
+      } else {
+        btn.classList.remove("selected");
+      }
+    });
+  }
+
+  function verifyAnswer() {
+    if (selectedOptionIndex === null) {
+      alert("Por favor, selecione uma das opções antes de verificar!");
+      return;
+    }
+
+    const q = currentQuestionsState[currentQuestionIndex];
+    const isCorrect = (selectedOptionIndex === q.correta);
+
+    studentAnswers.push({
+      selected: selectedOptionIndex,
+      correct: isCorrect
+    });
+
+    if (isCorrect) {
+      score += 1;
+    }
+
+    const buttons = document.querySelectorAll("#options-container .option-btn");
+    buttons.forEach((btn, idx) => {
+      btn.disabled = true;
+      if (idx === q.correta) {
+        btn.style.background = "#dcfce7";
+        btn.style.borderColor = "#86efac";
+        btn.style.fontWeight = "bold";
+      }
+      if (idx === selectedOptionIndex && !isCorrect) {
+        btn.style.background = "#fee2e2";
+        btn.style.borderColor = "#fca5a5";
+      }
+    });
+
+    const feedback = document.getElementById("feedback");
+    if (isCorrect) {
+      feedback.className = "feedback-box correct";
+      feedback.innerHTML = `<b>✅ Resposta Correta!</b><br>${q.explicacao}`;
+    } else {
+      feedback.className = "feedback-box incorrect";
+      feedback.innerHTML = `<b>❌ Resposta Incorreta.</b><br><b>Opção correta:</b> ${q.opcoes[q.correta]}<br><br>${q.explicacao}`;
+    }
+    feedback.style.display = "block";
+
+    document.getElementById("btn-verify").style.display = "none";
+    document.getElementById("btn-next").style.display = "block";
+  }
+
+  function nextQuestion() {
+    selectedOptionIndex = null;
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < currentQuestionsState.length) {
+      loadQuestion();
+    } else {
+      finishQuiz();
+    }
+  }
+
+  function finishQuiz() {
+    document.getElementById("step-2").classList.remove("active");
+    document.getElementById("step-3").classList.add("active");
+
+    document.getElementById("res-name").innerText = studentName;
+    document.getElementById("res-class").innerText = studentClass;
+    document.getElementById("res-score-pts").innerText = score.toFixed(1).replace('.', ',');
+    
+    const percentage = Math.round((score / currentQuestionsState.length) * 100);
+    document.getElementById("res-percent").innerText = percentage;
+
+    const listContainer = document.getElementById("corrected-questions-list");
+    listContainer.innerHTML = "";
+
+    currentQuestionsState.forEach((q, idx) => {
+      const ans = studentAnswers[idx];
+      const itemDiv = document.createElement("div");
+      itemDiv.className = "corrected-item";
+
+      let respostaCorretaHTML = "";
+      if (!ans.correct) {
+        respostaCorretaHTML = `<p><b>Resposta Correta:</b> ${q.opcoes[q.correta]}</p>`;
+      }
+
+      itemDiv.innerHTML = `
+        <div class="corrected-item-head">
+          <span>Questão ${idx + 1}</span>
+          <span class="status-badge ${ans.correct ? 'certo' : 'errado'}">
+            ${ans.correct ? 'CORRETA ✅' : 'INCORRETA ❌'}
+          </span>
+        </div>
+        <p><b>Enunciado:</b> ${q.pergunta}</p>
+        <p><b>Sua Resposta:</b> ${q.opcoes[ans.selected]}</p>
+        ${respostaCorretaHTML}
+        <div style="background: #f8fafc; border-left: 4px solid #0284c7; padding: 10px; margin-top: 10px; font-size: 0.9rem;">
+          <b>Explicação Educativa:</b> ${q.explicacao}
+        </div>
+      `;
+
+      listContainer.appendChild(itemDiv);
+    });
+
+    const pedBox = document.getElementById("pedagogical-content");
+    if (score === 5) {
+      pedBox.innerHTML = "<p><b>Excelente desempenho! 🌟</b> O aluno demonstrou domínio completo dos conceitos iniciais de Python (condicionais, loops contínuos, tratamento de erros e módulo random). Está totalmente apto a aplicar essa lógica diretamente nas bancadas com o robô LEGO SPIKE Prime!</p>";
+    } else if (score >= 3) {
+      pedBox.innerHTML = "<p><b>Bom desempenho! 👍</b> O aluno compreendeu bem a estrutura lógica dos programas. Recomenda-se revisar com atenção as questões incorretas antes de carregar os algoritmos nos motores do robô.</p>";
+    } else {
+      pedBox.innerHTML = "<p><b>Atenção e Necessidade de Revisão! ⚠️</b> O aluno apresentou dificuldades em alguns conceitos fundamentais. Sugere-se refazer os testes de bancada no Programiz e acompanhar o passo a passo com o apoio do professor.</p>";
+    }
+  }
+
+  // FUNÇÃO DE ENVIO PARA O GOOGLE APPS SCRIPT
+  function sendEvaluation() {
+    const targetEmail = document.getElementById("res-email-input").value.trim();
+    const btn = document.getElementById("btn-send-email");
+
+    if (btn) {
+      btn.innerText = "⏳ Enviando dados...";
+      btn.disabled = true;
+    }
+
+    const fullHtml = document.documentElement.outerHTML;
+
+    const payload = {
+      aluno: studentName,
+      turma: studentClass,
+      email: targetEmail,
+      nota: score.toFixed(1).replace('.', ','),
+      folderUrl: DESTINATION_DRIVE_FOLDER,
+      htmlContent: fullHtml
+    };
+
+    const formattedName = studentName.replace(/\s+/g, "_");
+    document.title = "Prova_Corrigida_" + formattedName + "_" + studentClass;
+
+    fetch(scriptUrl, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload)
+    }).then(() => {
+      let msg = "✅ Prova salva com sucesso na pasta do Google Drive!";
+      if (targetEmail) {
+        msg += "\n✉️ Uma cópia em PDF também foi enviada para o e-mail: " + targetEmail;
+      }
+      alert(msg);
+      if (btn) {
+        btn.innerText = "📄 Enviar Prova Corrigida (PDF / Drive)";
+        btn.disabled = false;
+      }
+    }).catch(err => {
+      alert("Ocorreu uma falha na conexão. A janela de impressão local do PDF será aberta.");
+      if (btn) {
+        btn.innerText = "📄 Enviar Prova Corrigida (PDF / Drive)";
+        btn.disabled = false;
+      }
+      window.print();
+    });
+  }
+</script>
+
+</body>
+</html>
